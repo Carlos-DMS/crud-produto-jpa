@@ -1,5 +1,3 @@
-package Program;
-
 import model.entities.Produto;
 import model.exceptions.ProdutoException;
 import model.services.ProdutoFactory;
@@ -28,7 +26,9 @@ public class Main {
 
         while (true) {
             try {
-                Produto produto = ProdutoFactory.cadastroProduto(em, sc);
+                ProdutoFactory.setScanner(sc);
+
+                Produto produto = ProdutoFactory.cadastroProduto(em);
 
                 if (produto != null) {
                     em.getTransaction().begin();

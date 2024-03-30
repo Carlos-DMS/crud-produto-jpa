@@ -24,6 +24,9 @@ public class Produto {
     @Column(name = "data_de_cadastro")
     private LocalDate dataDeCadastro;
 
+    @Column(name = "data_de_alteracao")
+    private LocalDate dataDeAlteracao;
+
     public Produto() {
     }
 
@@ -34,6 +37,27 @@ public class Produto {
         this.precoUnitario = precoUnitario;
         this.quantidade = quantidade;
         this.dataDeCadastro = LocalDate.now();
+        this.dataDeAlteracao = null;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public void setMarca(String marca) {
+        this.marca = marca;
+    }
+
+    public void setPrecoUnitario(Double precoUnitario) {
+        this.precoUnitario = precoUnitario;
+    }
+
+    public void setQuantidade(Integer quantidade) {
+        this.quantidade = quantidade;
+    }
+
+    public void setDataDeAlteracao(LocalDate dataDeAlteracao) {
+        this.dataDeAlteracao = dataDeAlteracao;
     }
 
     public Double valorTotal(){
@@ -52,6 +76,14 @@ public class Produto {
         sb.append("Quantidade: ").append(quantidade).append("\n");
         sb.append("Data de Cadastro: ").append(dataDeCadastro.format(fmt)).append("\n");
         sb.append("Valor Total: ").append(String.format("%.2f", valorTotal())).append("\n");
+
+        if (dataDeAlteracao != null) {
+            sb.append("Última alteração: ").append(dataDeAlteracao.format(fmt)).append("\n");
+        }
+        else {
+            sb.append("Última alteração: N/A").append("\n");
+        }
+
         return sb.toString();
     }
 
