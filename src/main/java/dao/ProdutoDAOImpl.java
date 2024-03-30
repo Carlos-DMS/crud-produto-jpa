@@ -48,9 +48,12 @@ public class ProdutoDAOImpl implements ProdutoDAO{
 
     @Override
     public void deletarPorId(String codigoDeBarra) {
+        em.getTransaction().begin();
         Produto produto = em.find(Produto.class, codigoDeBarra);
+
         if (produto != null) {
             em.remove(produto);
+            em.getTransaction().commit();
         }
         else{
             throw new ProdutoException("O produto não pode ser deletado, pois não existe no banco de dados.");
