@@ -1,11 +1,14 @@
+import constants.OpcoesMenu;
+import dao.ProdutoDAO;
+import dao.ProdutoDAOImpl;
 import model.entities.Produto;
 import model.exceptions.ProdutoException;
 import model.services.ProdutoFactory;
 
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -20,48 +23,103 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("mercado");
-        EntityManager em = emf.createEntityManager();
-
         Scanner sc = new Scanner(System.in);
+        ProdutoFactory.setScanner(sc);
+        ProdutoDAO produtoDAO = new ProdutoDAOImpl(emf);
 
-        while (true) {
+        List<Produto> produtos;
+        String codbarra, marca;
+        boolean continuar = true;
+
+        do {
             try {
-                ProdutoFactory.setScanner(sc);
+                System.out.println(exibirMenu());
 
-                Produto produto = ProdutoFactory.cadastroProduto(em);
+                System.out.print("Escolha uma opção: ");
+                int opcao = sc.nextInt();
+                System.out.println();
 
-                if (produto != null) {
-                    em.getTransaction().begin();
-                    em.persist(produto);
-                    em.getTransaction().commit();
+                switch (opcao) {
+                    case OpcoesMenu.INSERIR_PRODUTO:
+                        Produto novoProduto = ProdutoFactory.cadastroProduto(produtoDAO);
+                        produtoDAO.inserir(novoProduto);
+                        System.out.println("Produto inserido com sucesso!");
+                        System.out.println();
+                        break;
 
-                    System.out.println("Produto cadastrado com sucesso!");
-                    System.out.println();
+                    case OpcoesMenu.ATUALIZAR_PRODUTO:
+                        codbarra = ProdutoFactory.inserirCodigoDeBarras();
+                        produtoDAO.atualizar(codbarra);
+                        System.out.println("Produto atualizado com sucesso!");
+                        System.out.println();
+                        break;
 
-                    System.out.println("Informações do produto: ");
-                    System.out.println(produto);
+                    case OpcoesMenu.DELETAR_PRODUTO:
+                        codbarra = ProdutoFactory.inserirCodigoDeBarras();
+                        produtoDAO.deletarPorId(codbarra);
+                        System.out.println("Produto deletado com sucesso!");
+                        System.out.println();
+                        break;
 
-                    break;
+                    case OpcoesMenu.ENCONTRAR_POR_ID:
+                        codbarra = ProdutoFactory.inserirCodigoDeBarras();
+                        System.out.println(produtoDAO.encontrarPorId(codbarra));
+                        System.out.println();
+                        break;
+
+                    case OpcoesMenu.ENCONTRAR_POR_MARCA:
+                        marca = ProdutoFactory.inserirMarca();
+                        produtos = produtoDAO.encontrarPorMarca(marca);
+                        for (Produto produto : produtos){
+                            System.out.println(produto);
+                            System.out.println();
+                        }
+                        break;
+
+                    case OpcoesMenu.LISTAR_TODOS:
+                        produtos = produtoDAO.encontrarTodos();
+                        for (Produto produto : produtos){
+                            System.out.println(produto);
+                            System.out.println();
+                        }
+                        break;
+
+                    case OpcoesMenu.SAIR:
+                        System.out.println("Programa encerrado.");
+                        sc.close();
+                        produtoDAO.finalizarOperacoes();
+                        emf.close();
+                        continuar = false;
+                        break;
+
+                    default:
+                        System.out.println("Opção inválida.");
+                        System.out.println();
                 }
-            }
-            catch (ProdutoException e1) {
+            } catch (ProdutoException e1) {
                 System.out.println("Erro: " + e1.getMessage());
-                sc.nextLine();
                 System.out.println();
-            }
-            catch (InputMismatchException e2){
+            } catch (InputMismatchException e2) {
                 System.out.println("Erro: o dado inserido é inválido");
-                sc.nextLine();
                 System.out.println();
-            }
-            catch (Exception e3){
+            } catch (Exception e3) {
                 System.out.println("Erro inesperado: " + e3.getMessage());
-                sc.nextLine();
                 System.out.println();
             }
-        }
-        sc.close();
-        em.close();
-        emf.close();
+        } while (continuar);
+    }
+
+    public static StringBuilder exibirMenu() {
+        StringBuilder menu = new StringBuilder();
+        menu.append("===== Menu de Operações de Produto =====\n");
+        menu.append("1. Inserir um novo produto\n");
+        menu.append("2. Atualizar um produto por código de barras\n");
+        menu.append("3. Deletar um produto por código de barras\n");
+        menu.append("4. Encontrar um produto por código de barras\n");
+        menu.append("5. Encontrar produtos por marca\n");
+        menu.append("6. Listar todos os produtos\n");
+        menu.append("0. Sair\n");
+        menu.append("========================================\n");
+        return menu;
     }
 }

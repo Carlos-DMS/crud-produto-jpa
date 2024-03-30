@@ -1,9 +1,9 @@
 package model.services;
 
+import dao.ProdutoDAO;
 import model.entities.Produto;
 import model.exceptions.ProdutoException;
 
-import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.util.Scanner;
 
@@ -15,12 +15,14 @@ public class ProdutoFactory {
         ProdutoFactory.sc = sc;
     }
 
-    public static Produto cadastroProduto(EntityManager em){
+    public static Produto cadastroProduto(ProdutoDAO produtoDAO){
+        sc.nextLine();
+
         System.out.println("===Dados do produto===");
         System.out.print("Código de barras: ");
         String codBarra = sc.nextLine();
 
-        if (em.find(Produto.class, codBarra) == null) {
+        if (!produtoDAO.verificarExistenciaPorId(codBarra)) {
             System.out.print("Nome: ");
             String nome = sc.nextLine();
             tratamentoString(nome);
@@ -38,10 +40,6 @@ public class ProdutoFactory {
             tratamentoValores(quantidade);
 
             return new Produto(codBarra, nome, marca, precoUnitario, quantidade);
-        }
-        else {
-            System.out.println("Um produto com o mesmo código de barra já está cadastrado.");
-            System.out.println();
         }
         return null;
     }
@@ -68,6 +66,22 @@ public class ProdutoFactory {
         produto.setPrecoUnitario(precoUnitario);
         produto.setQuantidade(quantidade);
         produto.setDataDeAlteracao(LocalDate.now());
+    }
+
+    public static String inserirCodigoDeBarras(){
+        sc.nextLine();
+
+        System.out.print("Código de barras: ");
+
+        return sc.nextLine();
+    }
+
+    public static String inserirMarca(){
+        sc.nextLine();
+
+        System.out.print("Marca: ");
+
+        return sc.nextLine();
     }
 
     public static void tratamentoString(String texto){

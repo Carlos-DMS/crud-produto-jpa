@@ -78,10 +78,10 @@ public class Produto {
         sb.append("Valor Total: ").append(String.format("%.2f", valorTotal())).append("\n");
 
         if (dataDeAlteracao != null) {
-            sb.append("Última alteração: ").append(dataDeAlteracao.format(fmt)).append("\n");
+            sb.append("Última alteração: ").append(dataDeAlteracao.format(fmt));
         }
         else {
-            sb.append("Última alteração: N/A").append("\n");
+            sb.append("Última alteração: N/A");
         }
 
         return sb.toString();
