@@ -17,7 +17,6 @@ public class Main {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("mercado");
         EntityManager em = emf.createEntityManager();
 
-
         Scanner sc = new Scanner(System.in);
 
         while(true) {
@@ -59,8 +58,5 @@ public class Main {
                 System.out.println();
             }
         }
-
-
-
     }
 }
