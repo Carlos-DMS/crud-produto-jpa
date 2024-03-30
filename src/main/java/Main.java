@@ -32,18 +32,23 @@ public class Main {
                     System.out.print("Marca: ");
                     String marca = sc.nextLine();
 
+                    System.out.print("Preço unitário: ");
+                    double precoUnitario = sc.nextDouble();
+
                     System.out.print("Quantidade: ");
                     int quantidade = sc.nextInt();
 
-                    sc.nextLine();
-
-                    Produto produto = new Produto(codBarra, nome, marca, quantidade);
+                    Produto produto = new Produto(codBarra, nome, marca, precoUnitario, quantidade);
 
                     em.getTransaction().begin();
                     em.persist(produto);
                     em.getTransaction().commit();
 
-                    System.out.println("Processo concluído!");
+                    System.out.println("Produto cadastrado com sucesso!");
+                    System.out.println();
+
+                    System.out.println("Informações do produto: ");
+                    System.out.println(produto);
 
                     break;
                 }
